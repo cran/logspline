@@ -75,75 +75,78 @@ struct basisfunct {
    sumunc - sum_i B(x_i) over the uncensored data */
 
 
-static int *isvector();
-static short *issvector();
-static double *dsvector(),**dsmatrix();
-static int nlsd();
-static struct space *definespace();
-static void getsame();
-static void five();
-static void five01();
-static void five00();
-static void lubksb();
-static int ludcmp();
-static int adddim();
-static int findyl();
-static int findyr();
-static int findl();
-static int findr();
-static int findm();
-static int dlocation();
-static void betaadd();
-static int iter();
-static int iterx();
-static double pompall();
-static void savecode1();
-static int savecoden();
-static void initk();
-static double rao();
-static double praox();
-static int getnewc2();
-static double save22coden();
-static void remdim();
-static void betarem();
-static void redo1();
-static void redo2();
-static void solver();
-static void getc2();
-static void getc1();
-static void getonec1();
-static void setupspace();
-static int startspace();
-static void startnow();
-static int rearrange();
-static void getip();
-static void getp0();
-static void getq0();
-static void getp2();
-static void getq2();
-static void getp1();
-static void getq1();
-static double z1int();
-static double z2int();
-static double z3int();
-static double pqexpi();
-static double getf();
-static double mylog();
-static double myexp();
-static void m1int();
-static void l1int();
-static void l2int();
-static double fctf1();
-static double fctf2();
-static double pol3();
-static double inp3();
-static double mat3();
-static void swapspace();
-static void quadalloc();
-/* allocation */
+void nlogcensorx(int *intpars);
+void nlogcensor(int *intpars, double *data0, double *dpars, double *logs, int *ad, double *kts);
+static int nlsd(struct space *best, struct datastruct *data, double alpha, int ndmax, int mind, int strt, int silent, double *logs, int *ad);
+static struct space *definespace(int nd);
+static void getsame(double *x, int n, short *s);
+static void five(double *data, double *kts, int *intpars, short *same);
+static void five01(double *rr, int k, int n, int il);
+static void five00(double *rr, int k, int n);
+static void luinverse(double **a, int n);
+static int lusolve2(double **a, int n, double *b);
+static void lubksb(double **a, int n, int *indx, double b[]);
+static int ludcmp(double **a, int n, int *indx, double *d);
+static int adddim(struct space *spc, struct space *spc2, struct datastruct *data, int mind, int silent);
+static int findyl(int u, int l, double *x);
+static int findyr(int u, int l, double *x);
+static int findl(int *ll, int *uu, int mind, double *x, int nx, double knt);
+static int findr(int *ll, int *uu, int mind, double *x, int nx, double knt);
+static int findm(int *ll, int *uu, int mind, double *x, int nx, double k0, double k1);
+static int dlocation(int what, double *x, int nx, double k);
+static void betaadd(struct space *spc, struct space *spc2, int besti);
+static int iter(struct space *spc, struct datastruct *data, int silent, double *xxa);
+static int iterx(struct space *spc, struct datastruct *data, int silent, double *xxa);
+static double pompall(struct space *spc, struct datastruct *data, int what, int *xp);
+static void savecode1(struct space *spc, int j, double *cz, double **czz, double *what);
+static int savecoden(struct space *spc, int i0, int i1, double *cz, double **czz);
+static void initk(int i, int ndim, double *v, double **mm, double *v2, double **mm2);
+static double rao(struct space *spc, struct datastruct *data, double loc);
+static double praox(struct space *spc, struct datastruct *data, struct basisfunct *bb, double *iext, double intext[7], double c2ext[4], int j0ext);
+static int getnewc2(struct space *spc, struct datastruct *data, double loc, struct basisfunct *bb, double intext[7], double c2ext[4]);
+static double save22coden(struct space *spc, double *czz, struct basisfunct *bb, double int2ext[7], int j0ext, double c2ext[4]);
+static void remdim(struct space *spc, struct datastruct *data, struct space *spc2, int silent);
+static void betarem(struct space *spc2, struct space *spc, int irmax);
+static void redo1(struct space *spc, int irmax, int k);
+static void redo2(struct space *spc, int irmax, int k);
+static void solver(double **mm2, int i, int j, double *r1, struct space *spc);
+static void getc2(struct space *spc, struct datastruct *data);
+static void getc1(double *t, double *c, int i, int k);
+static void getonec1(double *c, int i, double *t, int j);
+static void setupspace(struct space *spc, struct datastruct *data);
+static int startspace(struct space *spc, struct datastruct *data, int strt, int silent);
+static void startnow(struct space *spc, struct datastruct *data);
+static int rearrange(struct space *spc, struct datastruct *data);
+static void getip(struct space *spc, struct datastruct *data);
+void rpqlsd(double *coef, double *knots, double *bnd, int *ipq, double *pq, int *lk, int *lp);
+static void getp0(double *q, double *p, int f, int l, double *cf, double k, double b, double cr);
+static void getq0(double *p, double *q, int f, int l, double *cf, double k, double b, double cr);
+static void getp2(double *q, double *p, int f, int l, double *cf, double k, double b, double cr);
+static void getq2(double *p, double *q, int f, int l, double *cf, double k, double b, double cr);
+static void getp1(double *q, double *p, int f, int l, double *cf, double k0, double k1, double p0, double p1);
+static void getq1(double *p, double *q, int f, int l, double *cf, double k0, double k1, double p0, double p1);
+static double z1int(double t1, double *c0, int j);
+static double z2int(double t1, double t2, double *c0);
+static double z3int(double k1, double k2, double *coef, int accuracy);
+static double pqexpi(int version, double t, double p, double *cf);
+static double *dsvector(int l);
+static double getf(double *c, double x);
+static double mylog(double x);
+static double myexp(double x);
+static short *issvector(int l);
+static int *isvector(int l);
+static void m1int(double *vv, double k1, double k2, int what, double *coef, int accuracy);
+static void l1int(double *results, double t1, double *coef, int j, int what);
+static void l2int(double *results, double t1, double t2, double *coef, int what);
+static double fctf1(double b0, double b1, double t1, double f1, int j);
+static double fctf2(double b0, double b1, double t1, double t2, double f1, double f2);
+static double pol3(double *coef, double x);
+static double inp3(double *c1, double *c2);
+static double mat3(double *c1, double *c2, double *c3);
+static void swapspace(struct space *s1, struct space *s2);
+static void quadalloc(void);
+static double **dsmatrix(int r, int c);
 
-static int lusolve2();
-static void luinverse();
 /* matrix inversion, solve a system */
 
 static double ctheta,*betaaddsorted;
@@ -157,15 +160,12 @@ static double *fiveee,*fiveh1,*fiverr,*betaaddv1,*betaremr1,*raoss,*luw,*luw2,**
 static double *itertmp1,*itertmp2,*rearsorted,**solc1,**solc2,**solc3;
 static double **itertmp3,**pompcoef,**betaaddt1,**raoii,**raoc2,**betaremm2;
 /******************************************************************************/
-void nlogcensorx(intpars)
-int *intpars;
+void nlogcensorx(int *intpars)
 {
       intpars[0]=MAXKNOTS+5;
 }
 
-void nlogcensor(intpars,data0,dpars,logs,ad,kts)
-int *intpars,*ad;
-double *data0,*logs,*kts,*dpars;
+void nlogcensor(int *intpars, double *data0, double *dpars, double *logs, int *ad, double *kts)
 
 /* data0  - uncensored data; coefs on exit
    intpars- integer parameters
@@ -343,11 +343,7 @@ double *data0,*logs,*kts,*dpars;
 }
 /******************************************************************************/
 /* the work */
-static int nlsd(best,data,alpha,ndmax,mind,strt,silent,logs,ad)
-struct space *best;
-struct datastruct *data;
-double alpha,*logs;
-int ndmax,mind,strt,silent,*ad;
+static int nlsd(struct space *best, struct datastruct *data, double alpha, int ndmax, int mind, int strt, int silent, double *logs, int *ad)
 
 /* best  - best space up to now
    data  - the data
@@ -484,8 +480,7 @@ int ndmax,mind,strt,silent,*ad;
 }
 /******************************************************************************/
 /* allocates storage for a space, and initializes elements */
-static struct space *definespace(nd)
-int nd;
+static struct space *definespace(int nd)
 {
    int i,j,k;
    struct space *spc;
@@ -519,10 +514,7 @@ int nd;
 }
 /******************************************************************************/
 /* figure out which datapoints are the same.... */
-static void getsame(x,n,s)
-double *x;
-int n;
-short *s;
+static void getsame(double *x,int n,short *s)
 {
    int i;
    double r;
@@ -542,10 +534,7 @@ short *s;
    }
 }
 /******************************************************************************/
-static void five(data,kts,intpars,same)
-double *data,*kts;
-int *intpars;
-short *same;
+static void five(double *data,double *kts,int *intpars,short *same)
 {
    int n1,k,l,i,j,g1,g2;
    double *rr,*ee,*h1,h2,h3;
@@ -594,18 +583,14 @@ short *same;
       kts[i]=h3*ee[g2] + (1 - h3) * ee[g1];
    }
 }     
-static void five01(rr,k,n,il)
-int k,n,il;
-double *rr;
+static void five01(double *rr,int k,int n,int il)
 {
    int i;
    five00(rr,2*k-1,2*n);
    for(i=0;i<k;i++)rr[i]=2*rr[i];
    if(il==0) for(i=0;i<k;i++)rr[i]=1-rr[2*k-2-i];
 } 
-static void five00(rr,k,n)
-int k,n;
-double *rr;
+static void five00(double *rr,int k,int n)
 {
    double fi=4.,eps1,eps2,eps,s,w,v;
    int i,i1,j,j2;
@@ -639,9 +624,7 @@ double *rr;
    for(i=0;i<k;i++)rr[i]=(rr[i]-1)/(n-1.);
 } 
 /******************************************************************************/
-static void luinverse(a,n)
-double **a;
-int n;
+static void luinverse(double **a,int n)
 {
    int k,j,*i;
    double *d,**c,r;
@@ -658,9 +641,7 @@ int n;
    }
 }
 /******************************************************************************/
-static int lusolve2(a,n,b)
-double **a,*b;
-int n;
+static int lusolve2(double **a,int n,double *b)
 {
    int *i,j,k;
    double **c,r;
@@ -673,9 +654,7 @@ int n;
    return 1;
 }
 /******************************************************************************/
-static void lubksb(a,n,indx,b)
-double **a,b[];
-int n,*indx;
+static void lubksb(double **a, int n, int *indx, double b[])
 {
    int i,ii=0,ip,j;
    double sum;
@@ -695,9 +674,7 @@ int n,*indx;
 }
 /******************************************************************************/
 #define TINY 1.0e-20;
-static int ludcmp(a,n,indx,d)
-int n,*indx;
-double **a,*d;
+static int ludcmp(double **a, int n, int *indx, double *d)
 {
    int i,imax=0,j,k;
    double big,dum,sum,temp,*vv;
@@ -746,10 +723,7 @@ double **a,*d;
 }
 #undef TINY
 /******************************************************************************/
-static int adddim(spc,spc2,data,mind,silent)
-struct space *spc,*spc2;
-struct datastruct *data;
-int mind,silent;
+static int adddim(struct space *spc, struct space *spc2, struct datastruct *data, int mind, int silent)
 {
    int i,nx,uu=0,ll=0,nowloc1=0,loloc=0,uploc=0,bestloc= -1;
    int besti= -1,nowloc2;
@@ -838,9 +812,7 @@ int mind,silent;
 }
 /******************************************************************************/
 /* finds location in an interval (l,b) - l might not have been tested yet */
-static int findyl(u,l,x)
-int l,u;
-double *x;
+static int findyl(int u, int l, double *x)
 {
    int i;
    if(x[l]==x[u])return -1;
@@ -852,9 +824,7 @@ double *x;
 }
 /******************************************************************************/
 /* finds location in an interval (b,u) - u might not have been tested yet */
-static int findyr(u,l,x)
-int l,u;
-double *x;
+static int findyr(int u, int l, double *x)
 {
    int i;
    if(x[l]==x[u])return -1;
@@ -872,9 +842,7 @@ double *x;
    x  - data
    nx - length of data
    knt- knot */
-static int findl(ll,uu,mind,x,nx,knt)
-double *x,knt;
-int nx,*ll,*uu,mind;
+static int findl(int *ll, int *uu, int mind, double *x, int nx, double knt)
 {
 /* dlocation - finds uu */
    int i;
@@ -894,9 +862,7 @@ int nx,*ll,*uu,mind;
    x  - data
    nx - length of data
    knt- knot */
-static int findr(ll,uu,mind,x,nx,knt)
-double *x,knt;
-int nx,*ll,*uu,mind;
+static int findr(int *ll, int *uu, int mind, double *x, int nx, double knt)
 {
 /* dlocation - finds ll */
    int i;
@@ -917,9 +883,7 @@ int nx,*ll,*uu,mind;
    nx - length of data
    k0 - knot
    k1 - knot */
-static int findm(ll,uu,mind,x,nx,k0,k1)
-double *x,k0,k1;
-int nx,*ll,*uu,mind;
+static int findm(int *ll, int *uu, int mind, double *x, int nx, double k0, double k1)
 {
 /* dlocation - finds ll */
    (*ll)=dlocation(1,x,nx,k0);
@@ -936,9 +900,7 @@ int nx,*ll,*uu,mind;
    x    - data
    nx   - length data
    k    - see above */
-static int dlocation(what,x,nx,k)
-int nx,what;
-double k,*x;
+static int dlocation(int what,double *x,int nx,double k)
 {
    int i;
    if(what==1){
@@ -953,9 +915,7 @@ double k,*x;
 }
 /******************************************************************************/
 /* gets the new starting values, solve one coef matrix w.r.t. the other */
-static void betaadd(spc,spc2,besti)
-struct space *spc,*spc2;
-int besti;
+static void betaadd(struct space *spc,struct space *spc2,int besti)
 {
    int i,j,k;
    double **t1,*v1;
@@ -981,11 +941,7 @@ int besti;
 }
 /******************************************************************************/
 /* top iteration - governs bounds */
-static int iter(spc,data,silent,xxa)
-int silent;
-double *xxa;
-struct space *spc;
-struct datastruct *data;
+static int iter(struct space *spc, struct datastruct *data, int silent, double *xxa)
 {
    double xpp=(*spc).upp,lpp=(*spc).upp,lll=(*spc).low,xll=(*spc).low;
    int n=0,oops,mll=(*spc).ilow,muu=(*spc).iupp;
@@ -1020,11 +976,7 @@ struct datastruct *data;
 }
 /******************************************************************************/
 /* the works */
-static int iterx(spc,data,silent,xxa)
-int silent;
-double *xxa;
-struct space *spc;
-struct datastruct *data;
+static int iterx(struct space *spc, struct datastruct *data, int silent, double *xxa)
 
 /* spc   - model
    data  - data
@@ -1155,10 +1107,7 @@ struct datastruct *data;
    return 0;
 }
 /******************************************************************************/
-static double pompall(spc,data,what,xp)
-int what,*xp;
-struct space *spc;
-struct datastruct *data;
+static double pompall(struct space *spc, struct datastruct *data, int what, int *xp)
 {
    double *ips,f=0.,logl;
    double *cy,**cyy,**coef;
@@ -1220,10 +1169,7 @@ struct datastruct *data;
    return logl;
 }
 /******************************************************************************/
-static void savecode1(spc,j,cz,czz,what)
-int j;
-struct space *spc;
-double *cz,**czz,*what;
+static void savecode1(struct space *spc, int j, double *cz, double **czz, double *what)
 {
    int k,j2;
    for(k=0;k<(*spc).ndim;k++){
@@ -1238,19 +1184,14 @@ double *cz,**czz,*what;
    }
 }
 /******************************************************************************/
-static int savecoden(spc,i0,i1,cz,czz)
-int i0,i1;
-struct space *spc;
-double *cz,**czz;
+static int savecoden(struct space *spc,int i0,int i1,double *cz,double **czz)
 {
    int j;
    for(j=i0;j<i1;j++) savecode1(spc,j,cz,czz,kints[j]);
    return i1;
 }
 /******************************************************************************/
-static void initk(i,ndim,v,mm,v2,mm2)
-int ndim,i;
-double *v,*v2,**mm,**mm2;
+static void initk(int i,int ndim,double *v,double **mm,double *v2,double **mm2)
 {
    int j,k;
    if(i==0){
@@ -1268,10 +1209,7 @@ double *v,*v2,**mm,**mm2;
 }
 /******************************************************************************/
 /* gets the rao statistic */
-static double rao(spc,data,loc)
-struct space *spc;
-struct datastruct *data;
-double loc;
+static double rao(struct space *spc,struct datastruct *data,double loc)
 {
    double **ii,*ss,r,iext[7],c2ext[4];
    int i,j,j0ext,ndim=(*spc).ndim;
@@ -1292,12 +1230,7 @@ double loc;
 }
 /******************************************************************************/
 /* computes the new parts of score and hessian */
-static double praox(spc,data,bb,iext,intext,c2ext,j0ext)
-struct space *spc;
-struct datastruct *data;
-struct basisfunct *bb;
-double *iext,intext[7],c2ext[4];
-int j0ext;
+static double praox(struct space *spc, struct datastruct *data, struct basisfunct *bb, double *iext, double intext[7], double c2ext[4], int j0ext)
 {
    double sext;
    int i,j,ndim=(*spc).ndim;
@@ -1315,11 +1248,7 @@ int j0ext;
 }
 /******************************************************************************/
 /* coefficients for a test-basis function */
-static int getnewc2(spc,data,loc,bb,intext,c2ext)
-struct space *spc;
-struct datastruct *data;
-struct basisfunct *bb;
-double loc,intext[7],c2ext[4];
+static int getnewc2(struct space *spc, struct datastruct *data, double loc, struct basisfunct *bb, double intext[7], double c2ext[4])
 {
    int i,j,k,j0,j1,ii[3],j0ext;
    double coef[10],rrr[10],t[3],cc[3];
@@ -1396,11 +1325,7 @@ double loc,intext[7],c2ext[4];
 }
 /******************************************************************************/
 /* integrates all steps for score and hessian */
-static double save22coden(spc,czz,bb,int2ext,j0ext,c2ext)
-int j0ext;
-struct basisfunct *bb;
-struct space *spc;
-double *czz,int2ext[7],c2ext[4];
+static double save22coden(struct space *spc, double *czz, struct basisfunct *bb, double int2ext[7], int j0ext, double c2ext[4])
 {
    int j,k,i1=((*spc).nip)-1;
    double cz=0;
@@ -1429,10 +1354,7 @@ double *czz,int2ext[7],c2ext[4];
    return cz;
 }
 /******************************************************************************/
-static void remdim(spc,data,spc2,silent)
-struct space *spc,*spc2;
-struct datastruct *data;
-int silent;
+static void remdim(struct space *spc,struct datastruct *data,struct space *spc2,int silent)
 
 /* spc   - model to be worked on
    spc2  - temporary copy of the space
@@ -1492,9 +1414,7 @@ int silent;
    betarem(spc2,spc,irmax);
 }
 /******************************************************************************/
-static void betarem(spc2,spc,irmax)
-struct space *spc,*spc2;
-int irmax;
+static void betarem(struct space *spc2,struct space *spc,int irmax)
 {
    int i,j,k;
    double **mm2,*r1,x,y;
@@ -1622,9 +1542,7 @@ int irmax;
    }
 }
 /******************************************************************************/
-static void redo1(spc,irmax,k)
-int k,irmax;
-struct space *spc;
+static void redo1(struct space *spc,int irmax,int k)
 {
    int i,i0=0,i1=2,i2=3;
    double a,b,*t,*c;
@@ -1642,9 +1560,7 @@ struct space *spc;
    c[0]= -t[i2]*c[1]-c[i0+2]*a*a*a-c[i1+2]*b*b*b;
 }
 /******************************************************************************/
-static void redo2(spc,irmax,k)
-int k,irmax;
-struct space *spc;
+static void redo2(struct space *spc,int irmax,int k)
 {
    int i,i0=k-4,i1=k-3,i2=k-1;
    double *t,*c;
@@ -1660,10 +1576,7 @@ struct space *spc;
 /******************************************************************************/
 /* This routine computes  Inv(H)%*%t(A)%*%Inv(A%*%Inv(H)%*%t(A))%*%A          
    mm2 = A jxi, mm1 = Inv (H) ixi */
-static void solver (mm2,i,j,r1,spc)
-double **mm2,*r1;
-int i,j;
-struct space *spc;
+static void solver (double **mm2,int i,int j,double *r1,struct space *spc)
 /* r1   - new beta
    i    - (*spc).ndim
    j    - number of restrictions */
@@ -1708,9 +1621,7 @@ struct space *spc;
 }
 /******************************************************************************/
 /* get the c2, c3 and sumunc elements of a bsis function */
-static void getc2(spc,data)
-struct space *spc;
-struct datastruct *data;
+static void getc2(struct space *spc,struct datastruct *data)
 
 /* spc  - model
    data - data */
@@ -1767,9 +1678,7 @@ struct datastruct *data;
 }
 /******************************************************************************/
 /* get c1 - the power basis representation - for a basisfunction */
-static void getc1(t,c,i,k)
-double *c,*t;
-int i,k;
+static void getc1(double *t,double *c,int i,int k)
 {
 /* get (*spc).basis.c1 */
    double a,b,d[10],r;
@@ -1805,9 +1714,7 @@ int i,k;
    } 
 }
 /******************************************************************************/
-static void getonec1(c,i,t,j)
-double *c,*t;
-int i,j;
+static void getonec1(double *c,int i,double *t,int j)
 {
    c[i]=1.;
    c[i+3]=(t[j+2]-t[j])*(t[j]-t[j+1])/((t[j+2]-t[j+3])*(t[j+1]-t[j+3]));
@@ -1816,9 +1723,7 @@ int i,j;
 }
    
 /******************************************************************************/
-static void setupspace(spc,data)
-struct space *spc;
-struct datastruct *data;
+static void setupspace(struct space *spc, struct datastruct *data)
 {
    int i;
 /* get (*spc).ips (*spc).nip (*data).idatx and (*spc).basis.iks */
@@ -1829,10 +1734,7 @@ struct datastruct *data;
    getc2(spc,data);
 }
 /******************************************************************************/
-static int startspace(spc,data,strt,silent)
-int silent,strt;
-struct space *spc;
-struct datastruct *data;
+static int startspace(struct space *spc, struct datastruct *data, int strt, int silent)
 {
    int i,k,l=0,ok;
    double r,s;
@@ -1907,9 +1809,7 @@ struct datastruct *data;
    return ok;
 }
 /******************************************************************************/
-static void startnow(spc,data)
-struct space *spc;
-struct datastruct *data;
+static void startnow(struct space *spc,struct datastruct *data)
 {
    int i,j0,j1;
    double r0,r1,s0,s1;
@@ -1937,9 +1837,7 @@ struct datastruct *data;
       -1./fabs(s1*(*spc).basis[1].c2[(*spc).nip][1]);
 }
 /******************************************************************************/
-static int rearrange(spc,data)
-struct space *spc;
-struct datastruct *data;
+static int rearrange(struct space *spc,struct datastruct *data)
 {
    int i,k,*ix,jx[500],nk=(*spc).nk,is,j,l;
    double *sorted;
@@ -1982,10 +1880,7 @@ struct datastruct *data;
 }
 /******************************************************************************/
 /* selects integration points */
-static void getip(spc,data)
-struct space *spc;
-struct datastruct *data;
-
+static void getip(struct space *spc, struct datastruct *data)
 /* spc - model
    data- data */
 {
@@ -2044,9 +1939,7 @@ struct datastruct *data;
    if((*spc).ndim>2)for(i=0;i<4;i++)(*spc).basis[2].iks[i]=kips[i-4+(*spc).nk];
    for(j=3;j<(*spc).ndim;j++)for(i=0;i<5;i++)(*spc).basis[j].iks[i]=kips[j+i-3];
 }
-void rpqlsd(coef,knots,bnd,ipq,pq,lk,lp)
-double *coef,*knots,*pq,*bnd;
-int *ipq,*lk,*lp;
+void rpqlsd(double *coef, double *knots, double *bnd, int *ipq, double *pq, int *lk, int *lp)
 {
    double *kpl,**cpl,*ppl,*pqx,r;
    double *zz,cor;
@@ -2237,45 +2130,35 @@ int *ipq,*lk,*lp;
   for(j=0;j<(*lp);j++)pq[j]=pqx[j];
 }
 /******************************************************************************/
-static void getp0(q,p,f,l,cf,k,b,cr)
-double *q,*p,*cf,k,b,cr;
-int f,l;
+static void getp0(double *q, double *p, int f, int l, double *cf, double k, double b, double cr)
 {
    int i; 
    if(b>0.5) for(i=f;i<=l;i++) p[i]=z2int(k,q[i],cf)/cr;
    else for(i=f;i<=l;i++) p[i]=z1int(q[i],cf,1)/cr;
 }
 /******************************************************************************/
-static void getq0(p,q,f,l,cf,k,b,cr)
-double *q,*p,*cf,k,b,cr;
-int f,l;
+static void getq0(double *p, double *q, int f, int l, double *cf, double k, double b, double cr)
 {
    int i; 
    if(b>0.5)for(i=f;i<=l;i++) q[i]=pqexpi(2,k,p[i]/cr,cf);
    else for(i=f;i<=l;i++) q[i]=pqexpi(1,k,p[i]/cr,cf);
 }
 /******************************************************************************/
-static void getp2(q,p,f,l,cf,k,b,cr)
-double *q,*p,*cf,k,b,cr;
-int f,l;
+static void getp2(double *q, double *p, int f, int l, double *cf, double k, double b, double cr)
 {
    int i; 
    if(b>0.5) for(i=f;i<=l;i++) p[i]=1.-z2int(q[i],k,cf)/cr;
    else for(i=f;i<=l;i++) p[i]=1.-z1int(q[i],cf,-1)/cr;
 }
 /******************************************************************************/
-static void getq2(p,q,f,l,cf,k,b,cr)
-double *q,*p,*cf,k,b,cr;
-int f,l;
+static void getq2(double *p, double *q, int f, int l, double *cf, double k, double b, double cr)
 {
    int i; 
    if(b>0.5)for(i=f;i<=l;i++) q[i]=pqexpi(4,k,1.-p[i]/cr,cf);
    else for(i=f;i<=l;i++) q[i]=pqexpi(3,k,1.-p[i]/cr,cf);
 }
 /******************************************************************************/
-static void getp1(q,p,f,l,cf,k0,k1,p0,p1)
-double *p,*q,*cf,k0,k1,p0,p1;
-int f,l;
+static void getp1(double *q, double *p, int f, int l, double *cf, double k0, double k1, double p0, double p1)
 {
    int i,j=0;
    double r;
@@ -2288,9 +2171,7 @@ int f,l;
    for(i=f;i<=l;i++)p[i]=p0+p[i]*r;
 }
 /******************************************************************************/
-static void getq1(p,q,f,l,cf,k0,k1,p0,p1)
-double *p,*q,*cf,k0,k1,p0,p1;
-int f,l;
+static void getq1(double *p, double *q, int f, int l, double *cf, double k0, double k1, double p0, double p1)
 {
    int i,j;
    double y[51],f1[101],r,s;
@@ -2317,9 +2198,7 @@ int f,l;
 /* computes integrals from -inf to t1 (j=1) or from t1 to inf (j1= -1)
    of exp(polynomial(c0)) */
 
-static double z1int(t1,c0,j)
-double t1,*c0;
-int j;
+static double z1int(double t1,double *c0,int j)
 {
    double f1;
    if(c0[1]<0) j = -j;
@@ -2330,8 +2209,7 @@ int j;
 /******************************************************************************/
 /* computes integrals from t1 to t2 of exp(polynomial(c0)) */
 
-static double z2int(t1,t2,c0)
-double t1,t2,*c0;
+static double z2int(double t1,double t2,double *c0)
 {
    int i1=1;
    double f1,f2;
@@ -2349,9 +2227,7 @@ double t1,t2,*c0;
 /******************************************************************************/
 /* computes integrals from t1 to t2 of exp(polynomial(coef)) */
 
-static double z3int(k1,k2,coef,accuracy)
-double k1,k2,*coef;
-int accuracy;
+static double z3int(double k1,double k2,double *coef,int accuracy)
 {
    double r1,r2,x,y,v,vv=0.;
    int i1;
@@ -2382,9 +2258,7 @@ int accuracy;
 }
 /******************************************************************************/
 /* 1: -inf -> x / 2: t -> x / 3: x -> inf / 4: x -> t  */
-static double pqexpi(version,t,p,cf)
-int version;
-double t,p,*cf;
+static double pqexpi(int version,double t,double p,double *cf)
 {
    if(cf[1]!=0. || version == 1 || version == 3){
       p=p*cf[1];
@@ -2402,8 +2276,7 @@ double t,p,*cf;
    return t-p/myexp(cf[0]);
 }
 /******************************************************************************/
-static double *dsvector(l)
-int l;
+static double *dsvector(int l)
 /* allocate a double vector with subscript range v[0...l] */
 {
    double *v;
@@ -2413,29 +2286,25 @@ int l;
    return v;
 }
 /******************************************************************************/
-static double getf(c,x)
-double *c,x;
+static double getf(double *c,double x)
 {
    return exp(c[0]+x*(c[1]+x*(c[2]+x*c[3])));
 }
 /******************************************************************************/
-static double mylog(x)
-double x;
+static double mylog(double x)
 {
 if(x < 10.e-250)return (double)(-575.64627);
 else return log(x);
 }
 /******************************************************************************/
-static double myexp(x)
-double x;
+static double myexp(double x)
 {
 if(x > 576.)return exp((double)576.);
 else return exp(x);
 }
 /******************************************************************************/
 /* allocate an short vector with subscript range v[0...l] */
-static short *issvector(l)
-int l;
+static short *issvector(int l)
 {
    int i;
    short *v;
@@ -2445,8 +2314,7 @@ int l;
 }
 /******************************************************************************/
 /* allocate an int vector with subscript range v[0...l] */
-static int *isvector(l)
-int l;
+static int *isvector(int l)
 {
    int *v,i;
    v=(int *)Salloc(l+1,int); 
@@ -2456,13 +2324,10 @@ int l;
 /******************************************************************************/
 /* computes integrals from t1 to t2  (numerically)
    of x^i (i<1, what=0; i<7 o.w.) times exp(polynomial(coef)) */
-static void m1int(vv,k1,k2,what,coef,accuracy)
+static void m1int(double *vv, double k1, double k2, int what, double *coef, int accuracy)
 
 /* accuracy  - accuracy
    r1 and r2 - from (k1,k2) to (-1,1)         */
-
-double k1,k2,*vv,*coef;
-int accuracy,what;
 {
    double r1,r2,x,y,z,v;
    int i1,i2,j;
@@ -2517,10 +2382,7 @@ int accuracy,what;
 /* computes integrals from -inf to t1 (j=1) or from t1 to inf (j1= -1)
    of x^i (i<1, what=0; i<7 o.w.) times exp(polynomial(coef)) */
 
-static void l1int(results,t1,coef,j,what)
-int j,what;
-double t1,*coef,*results;
-
+static void l1int(double *results, double t1, double *coef, int j, int what)
 {
    double u6,u5,u4,u3,u2,u1,u0,f1,b1=coef[1],b0=coef[0],b3[7];
    b3[0]=(double)1./b1;
@@ -2583,10 +2445,7 @@ double t1,*coef,*results;
 /******************************************************************************/
 /* computes integrals from t1 to t2  (exactly)
    of x^i (i<1, what=0; i<7 o.w.) times exp(polynomial(coef)) */
-static void l2int(results,t1,t2,coef,what)
-int what;
-double t1,t2,*coef,*results;
-
+static void l2int(double *results, double t1, double t2, double *coef, int what)
 {
    double u6,u5,u4,u3,u2,u1,u0,f1,b1=coef[1],b0=coef[0],b3[7],f2;
    int i;
@@ -2668,9 +2527,7 @@ double t1,t2,*coef,*results;
    }
 }
 /******************************************************************************/
-static double fctf1(b0,b1,t1,f1,j)
-double b0,b1,t1,f1;
-int j;
+static double fctf1(double b0, double b1, double t1, double f1, int j)
 {
    if(f1<0) j = -j;
    f1 = mylog(fabs(f1)) + b1*t1+b0;
@@ -2678,8 +2535,7 @@ int j;
    return (double)(j*myexp(f1));
 }
 /******************************************************************************/
-static double fctf2(b0,b1,t1,t2,f1,f2)
-double b0,b1,t1,t2,f1,f2;
+static double fctf2(double b0, double b1, double t1, double t2, double f1, double f2)
 {
    int i1=1,i2=1;
    if(f1<0) i1 = -1;
@@ -2691,20 +2547,17 @@ double b0,b1,t1,t2,f1,f2;
    return (double)(i2*myexp(f2)-i1*myexp(f1));
 }
 /******************************************************************************/
-static double pol3(coef,x)
-double *coef,x;
+static double pol3(double *coef, double x)
 {
    return coef[0]+x*(coef[1]+x*(coef[2]+x*coef[3]));
 }
 /******************************************************************************/
-static double inp3(c1,c2)
-double *c1,*c2;
+static double inp3(double *c1, double *c2)
 {
    return c1[0]*c2[0]+c1[1]*c2[1]+c1[2]*c2[2]+c1[3]*c2[3];
 }
 /******************************************************************************/
-static double mat3(c1,c2,c3)
-double *c1,*c2,*c3;
+static double mat3(double *c1, double *c2, double *c3)
 {
    double x=0.;
    int i,j;
@@ -2713,8 +2566,7 @@ double *c1,*c2,*c3;
 }
 /******************************************************************************/
 /* copies one space into another space */
-static void swapspace(s1,s2)
-struct space *s1,*s2;
+static void swapspace(struct space *s1, struct space *s2)
 {
    int i,j,k;
    (*s1).ndim=(*s2).ndim;
@@ -2744,7 +2596,7 @@ struct space *s1,*s2;
    }
 }
 /******************************************************************************/
-static void quadalloc()
+static void quadalloc(void)
 {
 /* Gaussian quadrature coefficients */
    ww6[1 ]= 0.467913934572691; yy6[1 ]= 0.238619186083197;
@@ -2784,8 +2636,7 @@ static void quadalloc()
    ww7[32]=  0.04869095700913972; yy7[32]=  0.02435029266342443;
 }
 /******************************************************************************/
-static double **dsmatrix(r,c)
-int r,c;
+static double **dsmatrix(int r, int c)
 /* allocate a double matrix with subscript range m[0..r][0..c] */
 {
    int i;

@@ -27,23 +27,48 @@ void F77_NAME(xdsidi)(double[][NC], int *, int *, int *, double *, int *, double
 void F77_NAME(xssort)(double *, double *, int *, int *);
 
 static double knots[NC],coef[NC][4][NC],zheta[NC],czheta,xg[NC],dfunpar[6];
-static int nknots,ng3[NC],ng4[NC],piecedens(); /* where(); */
-static int removeknot(),knotnumber(),numbertester();
-static double liter(),erroradjust(),middle(),error2(),likeli(),linsearch();
-static void fits(),setbounds();
-static void coeff() ,start1() ,start2() ,suffstat1() ,suffstat2() ,knotplace();
-static double dens3(),numint(),expin(),dens33(),onesearch();
-static double fun2(),tails(),fun48(),numints(),expin2();
-static void intnum2(),intnum3(),intnum4();
+static int nknots,ng3[NC],ng4[NC];
+
+void logcensor(int *idelete, int *iknotauto, double sample[], int nsample[], double bound[], int SorC[], int *ynknots, double yknots[], double ycoef[], double *alpha, double wk[], double wk2[], double logl[]);
+static int removeknot(double info[][NC], double coef2[][NC]);
+static void fits(double xcoef2[][NC], double xzheta[], double xczheta, double ycoef[], int xiknots[], int xnknots);
+static double liter(double info[][NC], double sufficient[][2], double bound[], int SorC[], int nsample[], double sample[], int accuracy, int *itrouble);
+static void setbounds(double bound[], double cbound[], int nsample[]);
+static double erroradjust(double shift[]);
+static double error2(double shift[], double rvr[]);
+static double likeli(double candidate[], int nsample[], double sample[], double bound[], int accuracy);
+static double linsearch(double shift[], double oldll, double bound[], int nsample[], double sample[], int accuracy);
+static double onesearch(double rt, double shift[], int accuracy, double bound[], int *err, int nsample[], double sample[]);
+static int numbertester(double aa);
+static double expin(int version, double t1, double t2, double a[]);
+static double expin2(int version, double t1, double t2, double aa[], double b1, double b0);
+static double dens3(double x);
+static double dens33(double x);
+static double numint(double k1, double k2, int accuracy);
+static double numint2(double k1, double k2, int accuracy);
+static double numints(double vv[], double k1, double k2, int accuracy, int ip);
+static double fun2(double x);
+static double fun48(double w, double x, double vv[], int ip);
+static void coeff(double coef2[][NC]);
+static void start1(double crossprods[][NC], double derivatives[], double sample[], int nsample[]);
+static void start2(double crossprods[][NC], double derivatives[], double coef2[][NC], int nkstart, int iremove);
+static void suffstat1(double suffcombine[][2], double sample[], int nsample[]);
+static void suffstat2(double suffcombine[][2], double coef2[][NC], double sufficient[][2]);
+static void knotplace(int iknots[], double rknots[], int iknotauto, double bound[], double sample[], int nsample[], int SorC[], double smp2[], double smp3[], double qt[]);
+static int knotnumber(int idelete, int nsample[], int nknots, int SorC[]);
+static int piecedens(double sample[], double smp2[], double smp3[], int nsample[]);
+static double middle(double info[][NC], double shift[], double sufficient[][2], double bound[], int accuracy, int nsample[], double sample[], double zheta[], int what);
+static void intnum2(double x1, double x2, double qolint[][NC +1], double shift[], double info[][NC], int n1, int n2, int what);
+static void intnum3(double x, double qolint[][NC +1], double d1, double e1, int vs, double bd, double shift[], double info[][NC], int n1, int n2, int what);
+static void intnum4(double x, double qolint[][NC +1], double d1, double e1, int vs, double bd, double shift[], double info[][NC], int n1, int n2, int what);
+static double tails(double info[][NC], double shift[], double coef[][4][NC], double bound[], double knots[], double zheta[], int nknots, int what);
+
 /******************************************************************************/
 /* this is the main program                                                   */
 /* remove follows at the end                                                  */
 
-void logcensor(idelete,iknotauto,sample,nsample,bound,
-              SorC,ynknots,yknots,ycoef,alpha,wk,wk2,logl)
+void logcensor(int *idelete, int *iknotauto, double sample[], int nsample[], double bound[], int SorC[], int *ynknots, double yknots[], double ycoef[], double *alpha, double wk[], double wk2[], double logl[])
 
-int *idelete,*iknotauto,nsample[],SorC[],*ynknots;
-double bound[],sample[],yknots[],wk[],wk2[],ycoef[],*alpha,logl[];
 /* these quantities are defined in the file where they originated and lhead.h */
 
 {
@@ -266,9 +291,8 @@ int i,j,nkstart,iremove=0,iknots[NC],xiknots[NC];
 }
 /******************************************************************************/
 
-static int removeknot(info,coef2)
+static int removeknot(double info[][NC],double coef2[][NC])
 
-double info[][NC],coef2[][NC];
 /* all described in originating files and lhead.h                             */
 
 {
@@ -330,9 +354,7 @@ double info[][NC],coef2[][NC];
    return irmax;
 }
 /*****************************************************************************/
-static void fits(xcoef2,xzheta,xczheta,ycoef,xiknots,xnknots)
-double xzheta[],xczheta,ycoef[],xcoef2[][NC];
-int xiknots[],xnknots;
+static void fits(double xcoef2[][50], double xzheta[], double xczheta, double ycoef[], int xiknots[], int xnknots)
 {
    int i,j;
    for(i=0;i< NC;i++)ycoef[i]=0.;
@@ -352,10 +374,7 @@ int xiknots[],xnknots;
 /* setbounds follows at the end                                               */
 
 
-static double liter(info,sufficient,bound,SorC,nsample,sample,accuracy,itrouble)
-
-double info[][NC],sufficient[][2],bound[],sample[];
-int SorC[],accuracy,nsample[],*itrouble;
+static double liter(double info[][50], double sufficient[][2], double bound[], int SorC[], int nsample[], double sample[], int accuracy, int *itrouble)
 
 {
    int counter=0,infol,i1,i2,i3,kpvt[NC],jaja1,i4,iii[4],ithere,i7,nrc=0,nrc2=0;
@@ -749,9 +768,7 @@ int SorC[],accuracy,nsample[],*itrouble;
       SorC[0] = -SorC[0];
    return newlikelihood;
 }
-static void setbounds(bound,cbound,nsample)
-double bound[],cbound[];
-int nsample[];
+static void setbounds(double bound[], double cbound[], int nsample[])
 {
 /* set the integration boundaries. O.k., this is quite complicated. There are 2
    arrays that determine how far we are integrating in each tail.
@@ -827,8 +844,7 @@ E                            bound[2]>=cbound[2]:
 /* this function computes the stopcriterion (zerror) and adjust the stepsize 
    (shift) if this is too large.                                              */
 
-static double erroradjust(shift)
-double shift[];
+static double erroradjust(double shift[])
 
 {
    double r1,r2;
@@ -862,8 +878,7 @@ double shift[];
 
    return r1;
 }
-static double error2(shift,rvr)
-double shift[],rvr[];
+static double error2(double shift[], double rvr[])
 {
    int i,j;
    double r=0.;
@@ -878,9 +893,7 @@ double shift[],rvr[];
 
 /* this routine computes the loglikelihood                                    */
 
-static double likeli(candidate,nsample,sample,bound,accuracy)
-double candidate[],sample[],bound[];
-int nsample[],accuracy;
+static double likeli(double candidate[], int nsample[], double sample[], double bound[], int accuracy)
 {
    double r0,r1,likl,r3[NC+1],aa[6],bb[6];
    int i1,i2,i3,i4,iv,iw;
@@ -922,7 +935,7 @@ int nsample[],accuracy;
    bb[5]=zheta[0] * coef[0][0][0]-log(czheta);
    r3[0]=expin(iw,knots[0],bound[2],bb);
    for(i1=1;i1<nknots;i1++)
-      r3[i1]=numint(knots[i1-1],knots[i1],dens3,accuracy);
+      r3[i1]=numint(knots[i1-1],knots[i1],accuracy);
 
 /* depending on the accuracy we either deal with the censored data approximate
    or exact                                                                   */
@@ -935,11 +948,11 @@ int nsample[],accuracy;
          for(i4=0;knots[i4]<sample[i2+1] && i4 < nknots;i4++);
 /* is it the same interval                                                    */
          if(i3==i4)
-            likl=likl+log(numint(sample[i2],sample[i2+1],dens3,0));
+            likl=likl+log(numint(sample[i2],sample[i2+1],0));
 /* or a different interval                                                    */
          else{
-            r1=numint(sample[i2],knots[i3],dens3,0);
-            r1=r1+numint(knots[i4-1],sample[i2+1],dens3,0);
+            r1=numint(sample[i2],knots[i3],0);
+            r1=r1+numint(knots[i4-1],sample[i2+1],0);
             for(i3=i3+1;i3<i4;i3++)r1=r1+r3[i3];
             likl=likl+log(r1);
          }
@@ -951,7 +964,7 @@ int nsample[],accuracy;
          for(i3=0;knots[i3]<sample[i2] && i3 < nknots;i3++);
 /* somewhere in the middle                                                    */
          if(i3<nknots){
-            r1=numint(sample[i2],knots[i3],dens3,0);
+            r1=numint(sample[i2],knots[i3],0);
             for(i3=i3+1;i3<=nknots;i3++) r1=r1+r3[i3];
 /* if r1<=r0 the likl is effectively -infinity                                */
             if(r1>r0) likl=likl+log(r1);
@@ -967,7 +980,7 @@ int nsample[],accuracy;
          for(i3=0;knots[i3]<sample[i2] && i3 < nknots;i3++);
 /* somewhere in the middle                                                    */
          if(i3>0){
-            r1=numint(knots[i3-1],sample[i2],dens3,0);
+            r1=numint(knots[i3-1],sample[i2],0);
             for(i4=0;i4<i3;i4++) r1=r1+r3[i4];
 /* if r1<=r0 the likl is effectively -infinity                                */
             if(r1>r0) likl=likl+log(r1);
@@ -987,7 +1000,7 @@ int nsample[],accuracy;
                i1=i1+ng3[i2];
                for(i3=0;knots[i3]<xg[i2] && i3<nknots;i3++);
                if(i3<nknots){
-                  r1=numint(xg[i2],knots[i3],dens3,0);
+                  r1=numint(xg[i2],knots[i3],0);
                   for(i3=i3+1;i3<=nknots;i3++) r1=r1+r3[i3];
                   if(r1>r0) likl=likl+ng3[i2]*log(r1);
                   else likl=likl-1000.*ng3[i2];
@@ -1006,7 +1019,7 @@ int nsample[],accuracy;
                i1=i1+ng4[i2];
                for(i3=0;knots[i3]<xg[i2] && i3<nknots;i3++);
                if(i3>0){
-                  r1=numint(knots[i3-1],xg[i2],dens3,0);
+                  r1=numint(knots[i3-1],xg[i2],0);
                   for(i4=0;i4<i3;i4++) r1=r1+r3[i4];
                   if(r1>r0) likl=likl+ng4[i2]*log(r1);
                   else likl=likl-1000.*ng4[i2];
@@ -1036,9 +1049,7 @@ int nsample[],accuracy;
 
 /* this routine does a steepest decent search in the direction shift          */
 
-static double linsearch(shift,oldll,bound,nsample,sample,accuracy)
-double shift[],oldll,bound[],sample[];
-int nsample[],accuracy;
+static double linsearch(double shift[], double oldll, double bound[], int nsample[], double sample[], int accuracy)
 {
    double rt,rl=1000.,rr=1000.,maxll,maxrt,ll;
    int i,err;
@@ -1093,9 +1104,7 @@ int nsample[],accuracy;
 
 /* this routine computes the loglikelihood in zheta+2^rt shift                */
 
-static double onesearch(rt,shift,accuracy,bound,err,nsample,sample)
-double shift[],rt,bound[],sample[];
-int accuracy,*err,nsample[];
+static double onesearch(double rt, double shift[], int accuracy, double bound[], int *err, int nsample[], double sample[])
 {
    int i,j;
    double rv[NC],ll,dm1[NC][NC],dm2[NC],dm3[NC][2];
@@ -1124,8 +1133,7 @@ int accuracy,*err,nsample[];
    ll=likeli(rv,nsample,sample,bound,accuracy);
    return ll;
 }
-static int numbertester(aa)
-double aa;
+static int numbertester(double aa)
 /* if aa = -Inf: 0
       aa = +Inf: 1
       aa =  NaN: 2
@@ -1175,13 +1183,11 @@ numints- computes a vector of numerical integrals                             */
       1   2.  3  4     <==== version                              */
                                                                  
 
-static double expin(version,t1,t2,a)
+static double expin(int version, double t1, double t2, double a[])
 
 /* input: a,b,c,d,e,t1,t2,version: see figure above
    local: a1,b1,c1: as a,b and c, but for the primitive.                      
           f1,f2 half-products                                    */
-int version;
-double t1,t2,a[];
 /* this version does not contain much information - the best way to figure out
    what is happening is to compute the integrals above, and then check below  */
 
@@ -1219,13 +1225,11 @@ double t1,t2,a[];
 /* This function computes a similar integral, but with a higher order leading
 polinomial                                                                    */
 
-static double expin2(version,t1,t2,aa,b1,b0)
+static double expin2(int version, double t1, double t2, double aa[], double b1, double b0)
 
 /* input: aa,b1,b0,t1,t2,version: see figure above
    local: u6,u5,u4,u3,u2,u1,u0: as a4,a3,a2,a1,a0, but for the primitive.            
           f1,f2 half-products                                    */
-int version;
-double t1,t2,aa[],b1,b0;
 /* this version does not contain much information - the best way to figure out
    what is happening is to compute the integrals above, and then check below  */
 
@@ -1266,8 +1270,7 @@ double t1,t2,aa[],b1,b0;
 /******************************************************************************/
 /* this function return a value from a logspline density                      */
 
-static double dens3(x)
-double x;
+static double dens3(double x)
 /* point of interest                                                          */
 
 {
@@ -1276,8 +1279,7 @@ double x;
 
 /******************************************************************************/
 /* this function return the log of a value from a logspline density           */
-static double dens33(x)
-double x;
+static double dens33(double x)
 /* point of interest                                                          */
 
 {
@@ -1305,7 +1307,7 @@ double x;
    fun      : function to be integrated          */
 
 
-static double numint(k1,k2,fun,accuracy)
+static double numint(double k1, double k2, int accuracy)
 
 /* Intgerals using Gauss-Legendre quadrature with 12 points    
    y1,y2,... - abisces
@@ -1313,8 +1315,6 @@ static double numint(k1,k2,fun,accuracy)
    accuracy  - accuracy
    r1 and r2 - from (k1,k2) to (-1,1)         */
 
-double k1,k2,(*fun)();
-int accuracy;
 {
    double r1,r2,w[33],y[33];
    int i;
@@ -1326,7 +1326,7 @@ int accuracy;
       w[2] = 0.360761573048139 * r1; y[2] = 0.661209386466265 * r1;
       w[3] = 0.171324429379170 * r1; y[3] = 0.932469514203152 * r1;
       r1 = 0.;
-      for(i=1;i<4;i++)r1 = r1 + w[i]*(fun(r2-y[i])+fun(r2+y[i]));
+      for(i=1;i<4;i++)r1 = r1 + w[i]*(dens3(r2-y[i])+dens3(r2+y[i]));
       return r1;
    }
 
@@ -1363,11 +1363,18 @@ int accuracy;
    w[31]=  0.04857546744150343 * r1; y[31]=  0.07299312178779904 * r1;
    w[32]=  0.04869095700913972 * r1; y[32]=  0.02435029266342443 * r1;
    r1 = 0.;
-   for(i=1;i<33;i++)r1 = r1 + w[i]*(fun(r2-y[i])+fun(r2+y[i]));
+   for(i=1;i<33;i++)r1 = r1 + w[i]*(dens3(r2-y[i])+dens3(r2+y[i]));
    return r1;
 }
-/***************************************/
-static double numints(vv,k1,k2,fun,accuracy,ip)
+/******************************************************************************/
+/* Numerical integration using gaussian quadrature.
+   See Abromowitz and Stegun.
+
+   k1 and k2: lower and upper integration bounds
+   fun      : function to be integrated          */
+
+
+static double numint2(double k1,double k2,int accuracy)
 
 /* Intgerals using Gauss-Legendre quadrature with 12 points    
    y1,y2,... - abisces
@@ -1375,8 +1382,66 @@ static double numints(vv,k1,k2,fun,accuracy,ip)
    accuracy  - accuracy
    r1 and r2 - from (k1,k2) to (-1,1)         */
 
-double k1,k2,(*fun)(),vv[];
-int accuracy,ip;
+{
+   double r1,r2,w[33],y[33];
+   int i;
+   r1 = ((k2 - k1) / 2);
+   r2 = ((k2 + k1) / 2);
+
+   if(accuracy == 0 || accuracy == 1){
+      w[1] = 0.467913934572691 * r1; y[1] = 0.238619186083197 * r1;
+      w[2] = 0.360761573048139 * r1; y[2] = 0.661209386466265 * r1;
+      w[3] = 0.171324429379170 * r1; y[3] = 0.932469514203152 * r1;
+      r1 = 0.;
+      for(i=1;i<4;i++)r1 = r1 + w[i]*(fun2(r2-y[i])+fun2(r2+y[i]));
+      return r1;
+   }
+
+   w[ 1]=  0.00178328072169643 * r1; y[1 ]=  0.99930504173577217 * r1;
+   w[ 2]=  0.00414703326056247 * r1; y[2 ]=  0.99634011677195533 * r1;
+   w[ 3]=  0.00650445796897836 * r1; y[3 ]=  0.99101337147674429 * r1;
+   w[ 4]=  0.00884675982636395 * r1; y[4 ]=  0.98333625388462598 * r1;
+   w[ 5]=  0.01116813946013113 * r1; y[5 ]=  0.97332682778991098 * r1;
+   w[ 6]=  0.01346304789671864 * r1; y[6 ]=  0.96100879965205377 * r1;
+   w[ 7]=  0.01572603047602472 * r1; y[7 ]=  0.94641137485840277 * r1;
+   w[ 8]=  0.01795171577569734 * r1; y[8 ]=  0.92956917213193957 * r1;
+   w[ 9]=  0.02013482315353021 * r1; y[9 ]=  0.91052213707850282 * r1;
+   w[10]=  0.02227017380838325 * r1; y[10]=  0.88931544599511414 * r1;
+   w[11]=  0.02435270256871087 * r1; y[11]=  0.86599939815409277 * r1;
+   w[12]=  0.02637746971505466 * r1; y[12]=  0.84062929625258032 * r1;
+   w[13]=  0.02833967261425948 * r1; y[13]=  0.81326531512279754 * r1;
+   w[14]=  0.03023465707240248 * r1; y[14]=  0.78397235894334139 * r1;
+   w[15]=  0.03205792835485155 * r1; y[15]=  0.75281990726053194 * r1;
+   w[16]=  0.03380516183714161 * r1; y[16]=  0.71988185017161088 * r1;
+   w[17]=  0.03547221325688239 * r1; y[17]=  0.68523631305423327 * r1;
+   w[18]=  0.03705512854024005 * r1; y[18]=  0.64896547125465731 * r1;
+   w[19]=  0.03855015317861563 * r1; y[19]=  0.61115535517239328 * r1;
+   w[20]=  0.03995374113272034 * r1; y[20]=  0.57189564620263400 * r1;
+   w[21]=  0.04126256324262353 * r1; y[21]=  0.53127946401989457 * r1;
+   w[22]=  0.04247351512365359 * r1; y[22]=  0.48940314570705296 * r1;
+   w[23]=  0.04358372452932345 * r1; y[23]=  0.44636601725346409 * r1;
+   w[24]=  0.04459055816375657 * r1; y[24]=  0.40227015796399163 * r1;
+   w[25]=  0.04549162792741814 * r1; y[25]=  0.35722015833766813 * r1;
+   w[26]=  0.04628479658131442 * r1; y[26]=  0.31132287199021097 * r1;
+   w[27]=  0.04696818281621002 * r1; y[27]=  0.26468716220876742 * r1;
+   w[28]=  0.04754016571483031 * r1; y[28]=  0.21742364374000708 * r1;
+   w[29]=  0.04799938859645831 * r1; y[29]=  0.16964442042399283 * r1;
+   w[30]=  0.04834476223480295 * r1; y[30]=  0.12146281929612056 * r1;
+   w[31]=  0.04857546744150343 * r1; y[31]=  0.07299312178779904 * r1;
+   w[32]=  0.04869095700913972 * r1; y[32]=  0.02435029266342443 * r1;
+   r1 = 0.;
+   for(i=1;i<33;i++)r1 = r1 + w[i]*(fun2(r2-y[i])+fun2(r2+y[i]));
+   return r1;
+}
+/***************************************/
+static double numints(double vv[],double k1,double k2,int accuracy,int ip)
+
+/* Intgerals using Gauss-Legendre quadrature with 12 points    
+   y1,y2,... - abisces
+   w1,w2,... - weight
+   accuracy  - accuracy
+   r1 and r2 - from (k1,k2) to (-1,1)         */
+
 {
    double y[33],w[33],r1,r2;
    int i1;
@@ -1389,8 +1454,8 @@ int accuracy,ip;
       w[3 ]= 0.171324429379170 * r1; y[3 ]= 0.932469514203152 * r1;
       for(i1=0;i1<ip;i1++)vv[i1]=0.;
       for(i1=1;i1<4;i1++){ 
-         fun(w[i1],r2-y[i1],vv,ip);
-         fun(w[i1],r2+y[i1],vv,ip);
+         fun48(w[i1],r2-y[i1],vv,ip);
+         fun48(w[i1],r2+y[i1],vv,ip);
       }
       return 0.;
    }
@@ -1428,8 +1493,8 @@ int accuracy,ip;
    w[32]=  0.04869095700913972 * r1; y[32]=  0.02435029266342443 * r1;
    for(i1=0;i1<ip;i1++)vv[i1]=0.;
    for(i1=1;i1<33;i1++){
-      fun(w[i1],r2-y[i1],vv,ip);
-      fun(w[i1],r2+y[i1],vv,ip);
+      fun48(w[i1],r2-y[i1],vv,ip);
+      fun48(w[i1],r2+y[i1],vv,ip);
    }
    return 0.;
 }
@@ -1439,26 +1504,23 @@ int accuracy,ip;
 
    dfunpar[] - parameters used by the integrayion routines.                   */
 
-static double fun2(x)
+static double fun2(double x)
 /* This function is:
                             2      3
                p1 + x p2 + x p3 + x p4
               e
                                                                               */
-double x;
 {
    return exp(dfunpar[1] + x * (dfunpar[2] + x * (dfunpar[3] + x *dfunpar[4])));
 }
 
 /******************************************************************************/
-static double fun48(w,x,vv,ip)
+static double fun48(double w,double x,double vv[],int ip)
 /* This function is:
            p0
           x  f(x)
                  +
                       where f(x) is a density provided by dens3               */
-double x,w,vv[];
-int ip;
 {
    double vx;
    int i1;
@@ -1484,9 +1546,7 @@ int ip;
    piecedens   - determines a piecewise constant density for initial knot placem
 *******************************************************************************/
 
-static void coeff(coef2)
-
-double coef2[][NC];
+static void coeff(double coef2[][NC])
 /* This function computes the coefficients of the basis functions from the knots
    coef2:
    first index: basis function number-1,
@@ -1600,13 +1660,11 @@ double coef2[][NC];
    The first one gathers statistics from all the datapoints and knots.
    The second one computes the starting values from these statistics          */
 
-static void start1(crossprods,derivatives,sample,nsample)
+static void start1(double crossprods[][NC],double derivatives[],double sample[],int nsample[])
 
 /* the objective of this routine is the computation of derivatives and
    crossproducts                                                              */
 
-double crossprods[][NC],derivatives[],sample[];
-int nsample[];
 
 /* sample,nsample,nknots, accuracy and knots see lhead.h and originating file
    derivatives[0]   = sum((sample))'' which is 0....
@@ -1696,13 +1754,12 @@ int nsample[];
 }
 
 /******************************************************************************/
-static void start2(crossprods,derivatives,coef2,nkstart,iremove)
+static void start2(double crossprods[][NC],double derivatives[],
+    double coef2[][NC],int nkstart,int iremove)
 
 /* this function combines derivatives and crossprods, and then inverts a
    system to compute starting values                                          */
 
-double crossprods[][NC],derivatives[],coef2[][NC];
-int nkstart,iremove;
 
 {
    int i,j,k,l,j2,l2,infox,kpvt[200];
@@ -1798,10 +1855,7 @@ int nkstart,iremove;
 /* The first routine collects statistics about the data. The second one
    uses these to compute the sufficiemt statistics                            */
 
-static void suffstat1(suffcombine,sample,nsample)
-
-double suffcombine[][2],sample[];
-int nsample[];
+static void suffstat1(double suffcombine[][2],double sample[],int nsample[])
 /* these quantities are defined in lhead.h and the file where they originate  
    suffcombine[0][a] = 1
    suffcombine[1][a] = sum(sample)/nsample[0]
@@ -1844,9 +1898,7 @@ int nsample[];
 
 /******************************************************************************/
 
-static void suffstat2(suffcombine,coef2,sufficient)
-
-double suffcombine[][2],coef2[][NC],sufficient[][2];
+static void suffstat2(double suffcombine[][2],double coef2[][NC],double sufficient[][2])
 /* all defined in lhead.h and the file where they originate.
    suffcombine defined in suffstat1                                           */
 
@@ -1869,11 +1921,9 @@ double suffcombine[][2],coef2[][NC],sufficient[][2];
 /******************************************************************************/
 /* These routines determine the position of the knots and the number of knots.*/
 
-static void knotplace(iknots,rknots,iknotauto,bound,sample,nsample,SorC,smp2,smp3,qt)
+static void knotplace(int iknots[], double rknots[], int iknotauto, double bound[],
+	double sample[], int nsample[], int SorC[], double smp2[], double smp3[], double qt[])
                                     
-
-int iknots[],iknotauto,SorC[],nsample[];
-double rknots[],sample[],bound[],smp2[],smp3[],qt[];
 /* these quantities are defined in lhead.h and the files where they originate */
 
 {
@@ -2241,9 +2291,8 @@ double rknots[],sample[],bound[],smp2[],smp3[],qt[];
 /******************************************************************************/
 /* determines the number of (starting) knots                                  */
 
-static int knotnumber(idelete,nsample,nknots,SorC)
+static int knotnumber(int idelete,int nsample[],int nknots,int SorC[])
 
-int idelete,nsample[],nknots,SorC[];
 /* all defined in lhead.c and originating file                                */
 {
 
@@ -2270,9 +2319,7 @@ int idelete,nsample[],nknots,SorC[];
    return ceil(r);
 }
 /******************************************************************************/
-static int piecedens(sample,smp2,smp3,nsample)
-double smp2[],smp3[],sample[];
-int nsample [];
+static int piecedens(double sample[],double smp2[],double smp3[],int nsample[])
 {
    int i,j,il,k,m,n;
    if(nsample[1]>0){
@@ -2379,12 +2426,11 @@ int nsample [];
    middle.  calls tails for the tails. */
 
 
-static double middle(info,shift,sufficient,bound,accuracy,nsample,sample,zheta,what)
-double zheta[],info[][NC],shift[],sufficient[][2],bound[],sample[];
-int accuracy,nsample[],what;
+static double middle(double info[][NC],double shift[],double sufficient[][2],
+   double bound[],int accuracy,int nsample[],double sample[],double zheta[],int what)
 
 {
-   double qolint[7][NC+1],aa[7],d1,e1,cth,d2,e2,fun2(),fun48();
+   double qolint[7][NC+1],aa[7],d1,e1,cth,d2,e2;
    int i1,i2,i3,i4,i5,version,version2,k0;
 /* local: i1,i2,i3,i4,i5 - counter
           polint[]       - integrals of the form x**i.exp(polynomial)         */
@@ -2402,7 +2448,7 @@ int accuracy,nsample[],what;
                   dfunpar[i2]=dfunpar[i2]+coef[i3][i2-1][i1]*zheta[i3];
             }
          }
-         cth = cth + numint(knots[i1-1],knots[i1],fun2,accuracy);
+         cth = cth + numint2(knots[i1-1],knots[i1],accuracy);
       }
       return cth;
    }
@@ -2412,7 +2458,7 @@ int accuracy,nsample[],what;
 
 /* polint gets the result of a numerical integration of the density
    times x^i2                                                                 */
-      (void)numints(aa,knots[i1-1],knots[i1],fun48,accuracy,7);
+      (void)numints(aa,knots[i1-1],knots[i1],accuracy,7);
       for(i2=0;i2<7;i2++)qolint[i2][i1]=aa[i2];
 
 /* For the scorefunction we need integrals of a basisfunction times
@@ -2549,12 +2595,11 @@ int accuracy,nsample[],what;
 }
 
 /******************************************************************************/
-static void intnum2(x1,x2,qolint,shift,info,n1,n2,what)
-double x1,x2,qolint[][NC+1],shift[],info[][NC];
-int n2,what,n1;
+static void intnum2(double x1,double x2,double qolint[][NC+1],double shift[],
+   double info[][NC],int n1,int n2,int what)
 {
    int i1,i2,i3,i4,i5,jl,jr,im;
-   double z0,z1[NC],z2[NC][NC],y1[7],y2[7],fun48();
+   double z0,z1[NC],z2[NC][NC],y1[7],y2[7];
 
 /* jl - in which interval is the left endpoint
    jr - in which interval is the right endpoint                               */
@@ -2569,11 +2614,11 @@ int n2,what,n1;
    for(i4=0;i4<7;i4++)y1[i4]=0;
    for(i4=0;i4<7;i4++)y2[i4]=0;
    if(jl==jr){
-      (void)numints(y1,x1,x2,fun48,0,im);
+      (void)numints(y1,x1,x2,0,im);
    }
    else{
-      (void)numints(y1,x1,knots[jl],fun48,0,im);
-      (void)numints(y2,knots[jr-1],x2,fun48,0,im);
+      (void)numints(y1,x1,knots[jl],0,im);
+      (void)numints(y2,knots[jr-1],x2,0,im);
    }
 
 /* z1 is going to be the first order contribution, z2 the second order, z0
@@ -2644,12 +2689,11 @@ int n2,what,n1;
    }
 }
 /******************************************************************************/
-static void intnum3(x,qolint,d1,e1,vs,bd,shift,info,n1,n2,what)
-double x,qolint[][NC+1],d1,e1,bd,shift[],info[][NC];
-int vs,n1,n2,what;
+static void intnum3(double x,double qolint[][NC+1],double d1,double e1,int vs,
+   double bd,double shift[],double info[][NC],int n1,int n2,int what)
 {
    int i1,i2,i3,i4,i5,jin,im;
-   double aa[7],z0,yy[7],z1[NC],z2[NC][NC],fun48();
+   double aa[7],z0,yy[7],z1[NC],z2[NC][NC];
 
    im = 3*what+1;
 
@@ -2658,7 +2702,7 @@ int vs,n1,n2,what;
    for(jin=0; jin<7; jin++) yy[jin]=0.;
    for(jin=0; knots[jin]<x && jin < nknots; jin++);
    if(jin<nknots)
-      (void)numints(yy,x,knots[jin],fun48,0,im);
+      (void)numints(yy,x,knots[jin],0,im);
    else{
       for(i1=0; i1<7; i1++){
          aa[i1]=1.;
@@ -2718,12 +2762,11 @@ int vs,n1,n2,what;
    }
 }
 /******************************************************************************/
-static void intnum4(x,qolint,d1,e1,vs,bd,shift,info,n1,n2,what)
-double x,qolint[][NC+1],d1,e1,bd,shift[],info[][NC];
-int vs,n1,n2,what;
+static void intnum4(double x,double qolint[][NC+1],double d1,double e1,int vs,double bd,
+       double shift[],double info[][NC],int n1,int n2,int what)
 {
    int i1,i2,i3,i4,i5,jin,im;
-   double aa[7],z0,yy[7],z1[NC],z2[NC][NC],fun48();
+   double aa[7],z0,yy[7],z1[NC],z2[NC][NC];
 
    im = 3*what+1;
 
@@ -2732,7 +2775,7 @@ int vs,n1,n2,what;
    for(jin=0; jin<7; jin++) yy[jin]=0.;
    for(jin=0; knots[jin]<x && jin < nknots; jin++);
    if(jin>0)
-      (void)numints(yy,knots[jin-1],x,fun48,0,im);
+      (void)numints(yy,knots[jin-1],x,0,im);
    else{
       for(i1=0; i1<7; i1++){
          aa[i1]=1.;
@@ -2792,12 +2835,12 @@ int vs,n1,n2,what;
    }
 }
 /******************************************************************************/
-static double tails(info,shift,coef,bound,knots,zheta,nknots,what)
+static double tails(double info[][NC],double shift[],double coef[][4][NC],
+    double bound[],double knots[],double zheta[],int nknots,int what)
 
 /* tails1 computes the integrals in the tails.                                */
 
-double info[][NC],shift[],coef[][4][NC],bound[],zheta[],knots[];
-int nknots,what;
+
 
 {
    double a[6],cth;

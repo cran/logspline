@@ -71,7 +71,7 @@ qoldlogspline <- function(p, fit)
 
 roldlogspline <- function(n, fit)
 {
-    if(class(fit)!="oldlogspline")
+    if(!inherits(fit, "oldlogspline"))
        stop("fit is not an oldlogspline object")
     pp <- runif(n)
     qoldlogspline(pp, fit)
@@ -80,7 +80,7 @@ roldlogspline <- function(n, fit)
 doldlogspline <- function(q, fit)
 {
     x <- q
-    if(class(fit)!="oldlogspline")
+    if(!inherits(fit, "oldlogspline"))
        stop("fit is not an oldlogspline object")
         q <- unstrip(q)
     y <- fit$coef[1] + x * fit$coef[2]
@@ -100,7 +100,7 @@ doldlogspline <- function(q, fit)
 plot.oldlogspline <- function(x, n = 100, what = "d", xlim, xlab = "", ylab = "", type = "l", add = FALSE, ...)
 {
     fit <- x
-    if(class(fit)!="oldlogspline")
+    if(!inherits(fit, "oldlogspline"))
        stop("fit is not an oldlogspline object")
         if(missing(xlim)) {
                 u1 <- qoldlogspline(0.01, fit)
@@ -136,7 +136,7 @@ print.oldlogspline <- function(x,...)
 }
 summary.oldlogspline <- function(object,...)
 {
-    if(class(object)!="oldlogspline")
+    if(!inherits(object, "oldlogspline"))
        stop("fit is not an oldlogspline object")
     fit <- object
     if(fit$delete==FALSE)stop(paste("summary.oldlogspline can only provide",
@@ -554,7 +554,7 @@ logspline <- function(x, lbound, ubound, maxknots=0, knots, nknots=0,
 }
 plogspline <- function(q, fit)
 {
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
    if(!missing(q))q <- unstrip(q)
     sq <- rank(q)
@@ -575,7 +575,7 @@ plogspline <- function(q, fit)
 }
 qlogspline <- function(p, fit)
 {
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
    if(!missing(p))p <- unstrip(p)
     sp <- rank(p)
@@ -596,14 +596,14 @@ qlogspline <- function(p, fit)
 }
 rlogspline <- function(n, fit)
 {
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
     pp <- runif(n)
     qlogspline(pp, fit)
 }
 dlogspline <- function(q, fit)
 {
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
    if(!missing(q))q <- unstrip(q)
     x <- q
@@ -618,7 +618,7 @@ dlogspline <- function(q, fit)
 plot.logspline <-function(x, n = 100, what = "d", add = FALSE, xlim, xlab = "", ylab = "", type = "l", ...)
 {
         fit <- x
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
         if(add){
                 plim <- (par()$usr)[1:2]
@@ -660,7 +660,7 @@ print.logspline <- function(x,...)
 summary.logspline <- function(object,...)
 {
         fit <- object
-    if(class(fit)!="logspline")
+   if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
    ul <- fit$penalty
    um <- fit$samples[1]

@@ -1,6 +1,6 @@
 Package: logspline
-Version: 2.1.19
-Date: 2022-11-22
+Version: 2.1.20
+Date: 2023-06-27
 Maintainer: Charles Kooperberg <clk@fredhutch.org>
 Title: Routines for Logspline Density Estimation
 Authors@R: c(person("Charles", "Kooperberg", role = c("aut", "cre"),
@@ -20,6 +20,6 @@ NeedsCompilation: yes
 Author: Charles Kooperberg [aut, cre],
   Cleve Moler [ctb] (LINPACK routines in src),
   Jack Dongarra [ctb] (LINPACK routines in src)
-Packaged: 2022-11-22 19:57:21 UTC; clk
+Packaged: 2023-06-27 19:08:58 UTC; clk
 Repository: CRAN
-Date/Publication: 2022-11-22 20:50:02 UTC
+Date/Publication: 2023-06-29 14:00:02 UTC

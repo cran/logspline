@@ -690,7 +690,7 @@ C
   125 K=I
 C                                  SELECT A CENTRAL ELEMENT OF THE
 C                                  ARRAY AND SAVE IT IN LOCATION T
-      IJ = I +  INT(DFLOAT (J-I) * R)
+      IJ = I +  INT(DBLE (J-I) * R)
       T=X(IJ)
 C                                  IF FIRST ELEMENT OF ARRAY IS GREATER
 C                                  THAN T, INTERCHANGE WITH T
@@ -774,7 +774,7 @@ C
 C                                  SELECT A CENTRAL ELEMENT OF THE
 C                                  ARRAY AND SAVE IT IN LOCATION T
 C     IJ = I + (DFLOAT (J-I) *R)
-      IJ = I +  INT(DFLOAT (J-I) * R)
+      IJ = I +  INT(DBLE (J-I) * R)
       T=X(IJ)
       TY= Y(IJ)
 C                                  IF FIRST ELEMENT OF ARRAY IS GREATER

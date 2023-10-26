@@ -601,7 +601,7 @@ rlogspline <- function(n, fit)
     pp <- runif(n)
     qlogspline(pp, fit)
 }
-dlogspline <- function(q, fit)
+dlogspline <- function(q, fit, log = FALSE)
 {
    if(!inherits(fit, "logspline"))
        stop("fit is not a logspline object")
@@ -610,9 +610,10 @@ dlogspline <- function(q, fit)
     y <- fit$coef.pol[1] + x * fit$coef.pol[2]
     for(i in 1:length(fit$knots)) 
        y <- y + fit$coef.kts[i] * ((abs(x - fit$knots[i]) +x- fit$knots[i])/2)^3
-    y <- exp(y)
-    if(fit$bound[1] > 0) y[x < fit$bound[2]] <- 0
-    if(fit$bound[3] > 0) y[x > fit$bound[4]] <- 0
+    if(fit$bound[1] > 0) y[x < fit$bound[2]] <- -Inf
+    if(fit$bound[3] > 0) y[x > fit$bound[4]] <- -Inf
+    if (!log)
+       y <- exp(y)
     y
 }
 plot.logspline <-function(x, n = 100, what = "d", add = FALSE, xlim, xlab = "", ylab = "", type = "l", ...)

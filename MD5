@@ -1,7 +1,7 @@
-20bd47daf616ebb2aa09b5d4f4e0aba2 *DESCRIPTION
+68f89f3ffa9345208431c373033f264c *DESCRIPTION
 73d98ba76a12b8b7aed3bb0ac4d6183c *NAMESPACE
-529c7ad633cb00d4188f2e6aea681abe *R/logspline.R
-e5937390332be13e210110b2f5030d8d *man/dlogspline.Rd
+0b3965f1e818bb8fadca23fa85193a48 *R/logspline.R
+b061f6d635b03d0e0cbec32904767529 *man/dlogspline.Rd
 1905f0e1bc2347092ee3a4d6fc806b08 *man/doldlogspline.Rd
 0523706ecb792f50782788cb50fea636 *man/logspline-internal.Rd
 0e63737114e136fef7ed9e2b893d8372 *man/logspline.Rd

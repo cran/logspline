@@ -10,7 +10,7 @@ a logspline density that was fitted using
 the 1997 knot addition and deletion algorithm (\code{\link{logspline}}). 
 The 1992 algorithm is available using the \code{\link{oldlogspline}} function.
 }
-\usage{dlogspline(q, fit) 
+\usage{dlogspline(q, fit, log = FALSE) 
 plogspline(q, fit) 
 qlogspline(p, fit) 
 rlogspline(n, fit) }
@@ -27,6 +27,9 @@ sample size. If \code{length(n)} is larger than 1, then
 }
 \item{fit}{
 \code{logspline} object, typically the result of \code{\link{logspline}}.
+}
+\item{log}{
+should dlogspline return densities (TRUE) or log-densities (FALSE)
 }
 }
 \value{Densities (\code{dlogspline}), probabilities (\code{plogspline}), quantiles (\code{qlogspline}), 

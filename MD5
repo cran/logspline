@@ -1,6 +1,6 @@
-68f89f3ffa9345208431c373033f264c *DESCRIPTION
+4993a77a829f3b9fb5969f2c62568328 *DESCRIPTION
 73d98ba76a12b8b7aed3bb0ac4d6183c *NAMESPACE
-0b3965f1e818bb8fadca23fa85193a48 *R/logspline.R
+c52c3779a3fd1a5a6e767e26ee01f07c *R/logspline.R
 b061f6d635b03d0e0cbec32904767529 *man/dlogspline.Rd
 1905f0e1bc2347092ee3a4d6fc806b08 *man/doldlogspline.Rd
 0523706ecb792f50782788cb50fea636 *man/logspline-internal.Rd
@@ -14,7 +14,7 @@ eabaae5f996c1402466f5a54717a3121 *man/summary.logspline.Rd
 d9d2d511c4cec309ecc1c2f05d87b121 *man/unstrip.Rd
 8290d2e9740414e315237f0d5d4024bb *src/Makevars
 5e5873b500e169a013fdd11dfd92ae97 *src/allpack.f
-e2b523fee3d37720e8273827811768a1 *src/lsdall.c
-77a4338784577cbe2db469dd3986e9b6 *src/nlsd.c
+9c36f685fe4a5af133cb6cd8581fb4ee *src/lsdall.c
+fbce5af052ac3a8de24c405def59697c *src/nlsd.c
 8197458ba2a4b07354e1cc3561a908fd *src/registerDynamicSymbol.c
 782c6ba6b56e9842d5854775ce3653e3 *src/x2c.h

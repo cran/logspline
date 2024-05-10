@@ -105,7 +105,6 @@ int i,j,nkstart,iremove=0,iknots[NC],xiknots[NC];
 
 
 /******************************************************************************/
-
 /* compute the number of knots (to start)                                     */
    for(i=0;i<NC;i++) ng3[i]=0;
    for(i=0;i<NC;i++) ng4[i]=0;

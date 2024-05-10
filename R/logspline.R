@@ -320,39 +320,39 @@ oldlogspline <- function(uncensored, right, left, interval, lbound, ubound,
         nsample[6] <- nsample[6]-1
         if(length(table(sample))<3)stop("Not enough unique values")
         z <- .C("logcensor",
-                as.integer(delete),
-                as.integer(iautoknot),
-                as.double(sample),
-                as.integer(nsample),
-                bd = as.double(xbound),
-                SorC = as.integer(SorC),
+                as.integer(c(delete,0,0,0,0)),
+                as.integer(c(iautoknot,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                as.integer(c(nsample,0,0,0,0)),
+                bd = as.double(c(xbound,0,0,0,0)),
+                SorC = as.integer(c(SorC,0,0,0,0)),
                 nk = as.integer(nknots),
-                kt = as.double(knots),
-                cf = as.double(c(knots, 0, 0)),
-                as.double(penalty),
-                as.double(sample),
-                as.double(sample),
-                logl = as.double(rep(0, n1 + 1)),
+                kt = as.double(c(knots,0,.0,0,0)),
+                cf = as.double(c(knots,0,.0,0,0)),
+                as.double(c(penalty,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                logl = as.double(rep(0, n1 + 1+10)),
         PACKAGE = "logspline")
         SorC <- z$SorC  # error messages
         if(SorC[1] == -1 && SorC[28] == 0 && nsample[1]!=nsample[2] && nsample[2]>15){
            SorC <- vector(mode = "integer", length = 35)
            SorC[1] <- 1    # the actual function call
            SorC[17] <- 1
-           z <- .C("logcensor",
-                   as.integer(delete),
-                   as.integer(iautoknot),
-                   as.double(sample),
-                   as.integer(nsample),
-                   bd = as.double(xbound),
-                   SorC = as.integer(SorC),
-                   nk = as.integer(nknots),
-                   kt = as.double(knots),
-                   cf = as.double(c(knots, 0, 0)),
-                   as.double(penalty),
-                   as.double(sample),
-                   as.double(sample),
-                   logl = as.double(rep(0, n1 + 1)),
+        z <- .C("logcensor",
+                as.integer(c(delete,0,0,0,0)),
+                as.integer(c(iautoknot,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                as.integer(c(nsample,0,0,0,0)),
+                bd = as.double(c(xbound,0,0,0,0)),
+                SorC = as.integer(c(SorC,0,0,0,0)),
+                nk = as.integer(nknots),
+                kt = as.double(c(knots,0,.0,0,0)),
+                cf = as.double(c(knots,0,.0,0,0)),
+                as.double(c(penalty,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                as.double(c(sample,0,0,0,0)),
+                logl = as.double(rep(0, n1 + 1+10)),
            PACKAGE = "logspline")
         }
         bound <- c(z$bd[2], z$bd[3], z$bd[4], z$bd[5])
@@ -444,6 +444,7 @@ logspline <- function(x, lbound, ubound, maxknots=0, knots, nknots=0,
    mm <- range(data)
    if(!missing(lbound)) mm <- range(c(mm, lbound))
    if(!missing(ubound)) mm <- range(c(mm, ubound))
+   if(!missing(knots) && maxknots>0 && length(knots)>maxknots+1) stop("maxknots < length(knots)-1")
 
    # boundaries
    ilow <- (!missing(lbound)) * 1

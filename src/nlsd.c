@@ -284,7 +284,7 @@ void nlogcensor(int *intpars, double *data0, double *dpars, double *logs, int *a
       five(data0,kts,intpars,(*data).same);
       strt= intpars[2];
    }
-   if(ndmax>0 && strt>ndmax){
+   if(ndmax>0 && strt>ndmax+1){
       strt=floor((ndmax+3)/2.);
    }
    if(ndmax<0 && strt>(-ndmax)){
